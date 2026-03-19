@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pokédex FRLG – Gonna catch 'em all!</title>
+<title>Pokédex FRLG – Onde Capturar</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -473,9 +473,85 @@
   .m-event { background:rgba(230,57,70,0.15); color:var(--fr-red); border:1px solid rgba(230,57,70,0.3); }
 
   .hidden { display: none !important; }
+
+  /* ── LANGUAGE SWITCHER ── */
+  .lang-switcher {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 100;
+    display: flex;
+    gap: 6px;
+  }
+  .lang-btn {
+    width: 36px;
+    height: 26px;
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 0;
+    overflow: hidden;
+    background: none;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lang-btn:hover {
+    border-color: var(--accent);
+    transform: scale(1.1);
+  }
+  .lang-btn.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(244,208,63,0.5);
+  }
+  .lang-btn svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
 </style>
 </head>
 <body>
+
+<div class="lang-switcher">
+  <!-- USA -->
+  <button class="lang-btn" id="lang-en" onclick="setLang('en')" title="English">
+    <svg viewBox="0 0 36 26" xmlns="http://www.w3.org/2000/svg">
+      <rect width="36" height="26" fill="#B22234"/>
+      <rect y="2" width="36" height="2" fill="#fff"/>
+      <rect y="6" width="36" height="2" fill="#fff"/>
+      <rect y="10" width="36" height="2" fill="#fff"/>
+      <rect y="14" width="36" height="2" fill="#fff"/>
+      <rect y="18" width="36" height="2" fill="#fff"/>
+      <rect y="22" width="36" height="2" fill="#fff"/>
+      <rect width="15" height="14" fill="#3C3B6E"/>
+      <!-- Stars simplified -->
+      <circle cx="2.5" cy="2" r="1" fill="#fff"/><circle cx="5" cy="2" r="1" fill="#fff"/><circle cx="7.5" cy="2" r="1" fill="#fff"/><circle cx="10" cy="2" r="1" fill="#fff"/><circle cx="12.5" cy="2" r="1" fill="#fff"/>
+      <circle cx="3.75" cy="4.5" r="1" fill="#fff"/><circle cx="6.25" cy="4.5" r="1" fill="#fff"/><circle cx="8.75" cy="4.5" r="1" fill="#fff"/><circle cx="11.25" cy="4.5" r="1" fill="#fff"/>
+      <circle cx="2.5" cy="7" r="1" fill="#fff"/><circle cx="5" cy="7" r="1" fill="#fff"/><circle cx="7.5" cy="7" r="1" fill="#fff"/><circle cx="10" cy="7" r="1" fill="#fff"/><circle cx="12.5" cy="7" r="1" fill="#fff"/>
+      <circle cx="3.75" cy="9.5" r="1" fill="#fff"/><circle cx="6.25" cy="9.5" r="1" fill="#fff"/><circle cx="8.75" cy="9.5" r="1" fill="#fff"/><circle cx="11.25" cy="9.5" r="1" fill="#fff"/>
+      <circle cx="2.5" cy="12" r="1" fill="#fff"/><circle cx="5" cy="12" r="1" fill="#fff"/><circle cx="7.5" cy="12" r="1" fill="#fff"/><circle cx="10" cy="12" r="1" fill="#fff"/><circle cx="12.5" cy="12" r="1" fill="#fff"/>
+    </svg>
+  </button>
+  <!-- Brazil -->
+  <button class="lang-btn active" id="lang-pt" onclick="setLang('pt')" title="Português">
+    <svg viewBox="0 0 36 26" xmlns="http://www.w3.org/2000/svg">
+      <rect width="36" height="26" fill="#009c3b"/>
+      <polygon points="18,2 34,13 18,24 2,13" fill="#FEDF00"/>
+      <circle cx="18" cy="13" r="6" fill="#002776"/>
+      <path d="M12.5,11 Q18,9.5 23.5,11" stroke="#fff" stroke-width="1.2" fill="none"/>
+    </svg>
+  </button>
+  <!-- France -->
+  <button class="lang-btn" id="lang-fr" onclick="setLang('fr')" title="Français">
+    <svg viewBox="0 0 36 26" xmlns="http://www.w3.org/2000/svg">
+      <rect width="12" height="26" fill="#002395"/>
+      <rect x="12" width="12" height="26" fill="#fff"/>
+      <rect x="24" width="12" height="26" fill="#ED2939"/>
+    </svg>
+  </button>
+</div>
 
 <header>
   <svg class="pokeball-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -493,7 +569,7 @@
     <circle cx="50" cy="50" r="9" fill="#f0f0f0"/>
     <circle cx="50" cy="50" r="5" fill="#fff"/>
   </svg>
-  <div class="logo-title">Gonna Catch 'em All!</div>
+  <div class="logo-title">Gonna Catch 'Em All</div>
   <div class="logo-sub">FireRed &amp; LeafGreen &nbsp;·&nbsp; Kanto Pokédex</div>
 </header>
 
@@ -548,11 +624,11 @@
 
 <div class="empty-state" id="emptyState">
   <div class="big-sprite">🔴</div>
-  <p>SELECIONE UM POKÉMON<br>PARA VER ONDE CAPTURÁ-LO</p>
+  <p id="emptyHint">SELECIONE UM POKÉMON<br>PARA VER ONDE CAPTURÁ-LO</p>
 </div>
 
 <footer>
-  Pokémon FireRed &amp; LeafGreen · &nbsp;|&nbsp; &nbsp;|&nbsp; Fan-made, sem afiliação com Nintendo/Game Freak
+  Pokémon FireRed &amp; LeafGreen · GBA · 2004 &nbsp;|&nbsp; Dados baseados nos jogos originais &nbsp;|&nbsp; Fan-made, sem afiliação com Nintendo/Game Freak
 </footer>
 
 <script>
@@ -1105,14 +1181,19 @@ function showDetails(id) {
 
   const locs = p.locations.filter(l => l.version === 'both' || l.version === currentVersion);
   const content = document.getElementById('locationsContent');
+  const t = TRANSLATIONS[currentLang];
+
+  // Section title
+  document.querySelector('.section-title').textContent = t.section_locations;
 
   if (locs.length === 0) {
-    const verName = currentVersion === 'fr' ? '🔴 Fire Red' : '🟢 Leaf Green';
+    const verName = currentVersion === 'fr'
+      ? (currentLang === 'fr' ? '🔴 Rouge Feu' : currentLang === 'en' ? '🔴 Fire Red' : '🔴 Fire Red')
+      : (currentLang === 'fr' ? '🟢 Vert Feuille' : currentLang === 'en' ? '🟢 Leaf Green' : '🟢 Leaf Green');
     content.innerHTML = `
       <div class="no-locations">
         <div class="big">😢</div>
-        <p>Este Pokémon não está disponível na versão <strong>${verName}</strong>.<br>
-        Tente a versão oposta ou obtenha via troca!</p>
+        <p>${t.no_locations(verName)}</p>
       </div>`;
     return;
   }
@@ -1131,20 +1212,136 @@ function showDetails(id) {
           <span class="rate-text">${l.rate}%</span>
         </div>
       </td>
-      <td class="level-range">Nv.${l.levels}</td>
+      <td class="level-range">${t.lv_prefix}${l.levels}</td>
     </tr>`;
   }).join('');
 
   content.innerHTML = `
     <table class="location-table">
       <thead><tr>
-        <th>LOCAL</th>
-        <th>MÉTODO</th>
-        <th>% APARIÇÃO</th>
-        <th>NÍVEL</th>
+        <th>${t.th_area}</th>
+        <th>${t.th_method}</th>
+        <th>${t.th_rate}</th>
+        <th>${t.th_level}</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
+}
+
+// ═══════════════════════════════════════════════
+//  i18n — TRANSLATIONS
+// ═══════════════════════════════════════════════
+const TRANSLATIONS = {
+  pt: {
+    title: "ONDE CAPTURAR",
+    subtitle: "FireRed & LeafGreen · Kanto Pokédex",
+    btn_fr: "🔴 FIRE RED",
+    btn_lg: "🟢 LEAF GREEN",
+    search_placeholder: "Buscar por nome ou número...",
+    grid_label: "— SELECIONE UM POKÉMON —",
+    section_locations: "📍 LOCAIS DE CAPTURA",
+    th_area: "LOCAL",
+    th_method: "MÉTODO",
+    th_rate: "% APARIÇÃO",
+    th_level: "NÍVEL",
+    lv_prefix: "Nv.",
+    no_locations: (ver) => `Este Pokémon não está disponível na versão <strong>${ver}</strong>.<br>Tente a versão oposta ou obtenha via troca!`,
+    empty_hint: "SELECIONE UM POKÉMON\nPARA VER ONDE CAPTURÁ-LO",
+    footer: "Pokémon FireRed & LeafGreen · GBA · 2004 | Dados baseados nos jogos originais | Fan-made, sem afiliação com Nintendo/Game Freak",
+    methods: {
+      grass:"Grama Alta", surf:"Surf", fish:"Pesca",
+      cave:"Masmorra / Cave", gift:"Presente / Inicial",
+      trade:"Troca / Evolução", event:"Evento / Lendário"
+    }
+  },
+  en: {
+    title: "Gonna Catch 'Em All",
+    subtitle: "FireRed & LeafGreen · Kanto Pokédex",
+    btn_fr: "🔴 FIRE RED",
+    btn_lg: "🟢 LEAF GREEN",
+    search_placeholder: "Search by name or number...",
+    grid_label: "— SELECT A POKÉMON —",
+    section_locations: "📍 LOCATIONS",
+    th_area: "LOCATION",
+    th_method: "METHOD",
+    th_rate: "% ENCOUNTER",
+    th_level: "LEVEL",
+    lv_prefix: "Lv.",
+    no_locations: (ver) => `This Pokémon is not available in version <strong>${ver}</strong>.<br>Try the opposite version or obtain via trade!`,
+    empty_hint: "SELECT A POKÉMON\nTO SEE WHERE TO CATCH IT",
+    footer: "Pokémon FireRed & LeafGreen · GBA · 2004 | Data based on original games | Fan-made, not affiliated with Nintendo/Game Freak",
+    methods: {
+      grass:"Tall Grass", surf:"Surfing", fish:"Fishing",
+      cave:"Dungeon / Cave", gift:"Gift / Starter",
+      trade:"Trade / Evolution", event:"Event / Legendary"
+    }
+  },
+  fr: {
+    title: "Gonna Catch 'Em All",
+    subtitle: "FireRed & LeafGreen · Pokédex de Kanto",
+    btn_fr: "🔴 ROUGE FEU",
+    btn_lg: "🟢 VERT FEUILLE",
+    search_placeholder: "Rechercher par nom ou numéro...",
+    grid_label: "— CHOISISSEZ UN POKÉMON —",
+    section_locations: "📍 LIEUX DE CAPTURE",
+    th_area: "LIEU",
+    th_method: "MÉTHODE",
+    th_rate: "% RENCONTRE",
+    th_level: "NIVEAU",
+    lv_prefix: "Nv.",
+    no_locations: (ver) => `Ce Pokémon n'est pas disponible dans la version <strong>${ver}</strong>.<br>Essayez la version opposée ou obtenez-le via échange !`,
+    empty_hint: "CHOISISSEZ UN POKÉMON\nPOUR VOIR OÙ LE CAPTURER",
+    footer: "Pokémon Rouge Feu & Vert Feuille · GBA · 2004 | Données basées sur les jeux originaux | Fan-made, sans affiliation avec Nintendo/Game Freak",
+    methods: {
+      grass:"Herbes Hautes", surf:"Surf", fish:"Pêche",
+      cave:"Donjon / Grotte", gift:"Cadeau / Starter",
+      trade:"Échange / Évolution", event:"Événement / Légendaire"
+    }
+  }
+};
+
+let currentLang = 'pt';
+
+function setLang(lang) {
+  currentLang = lang;
+  const t = TRANSLATIONS[lang];
+
+  // Update active button
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`lang-${lang}`).classList.add('active');
+
+  // Header
+  document.querySelector('.logo-title').textContent = t.title;
+  document.querySelector('.logo-sub').innerHTML = t.subtitle;
+
+  // Version buttons
+  document.querySelector('.version-btn.fr').textContent = t.btn_fr;
+  document.querySelector('.version-btn.lg').textContent = t.btn_lg;
+
+  // Search
+  document.getElementById('searchInput').placeholder = t.search_placeholder;
+
+  // Grid label
+  document.querySelector('.grid-label').textContent = t.grid_label;
+
+  // Empty state hint
+  const hint = document.getElementById('emptyHint');
+  if (hint) hint.innerHTML = t.empty_hint.replace('\n', '<br>');
+
+  // Footer
+  document.querySelector('footer').textContent = t.footer;
+
+  // Method labels update
+  METHOD_LABEL.grass  = t.methods.grass;
+  METHOD_LABEL.surf   = t.methods.surf;
+  METHOD_LABEL.fish   = t.methods.fish;
+  METHOD_LABEL.cave   = t.methods.cave;
+  METHOD_LABEL.gift   = t.methods.gift;
+  METHOD_LABEL.trade  = t.methods.trade;
+  METHOD_LABEL.event  = t.methods.event;
+
+  // Re-render details if a pokemon is selected
+  if (selectedId) showDetails(selectedId);
 }
 
 // Init
