@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pokédex FRLG – Gonna catch 'em all!</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fr-red: #e63946;
+    --lg-green: #2dc653;
+    --dark: #1a1a2e;
+    --darker: #0f0f1a;
+    --card-bg: #16213e;
+    --card-border: #0f3460;
+    --text: #e0e0f0;
+    --muted: #8888aa;
+    --accent: #f4d03f;
+    --pixel: 'Press Start 2P', monospace;
+    --body: 'Nunito', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--darker);
+    color: var(--text);
+    font-family: var(--body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Stars background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 60%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 70%, rgba(255,255,255,0.25) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 2.5rem 1rem 2rem;
+    background: linear-gradient(180deg, rgba(230,57,70,0.15) 0%, transparent 100%);
+    border-bottom: 2px solid rgba(230,57,70,0.2);
+  }
+
+  .logo-title {
+    font-family: var(--pixel);
+    font-size: clamp(0.7rem, 2.5vw, 1.1rem);
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.5);
+    margin-bottom: 0.4rem;
+  }
+
+  .logo-sub {
+    font-family: var(--pixel);
+    font-size: clamp(0.45rem, 1.5vw, 0.65rem);
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .pokeball-icon {
+    width: 48px;
+    height: 48px;
+    display: inline-block;
+    animation: spin 4s linear infinite;
+    margin-bottom: 0.5rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── VERSION TABS ── */
+  .version-tabs {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .version-btn {
+    font-family: var(--pixel);
+    font-size: 0.55rem;
+    padding: 0.75rem 1.5rem;
+    border: 3px solid;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .version-btn.fr {
+    border-color: var(--fr-red);
+    color: var(--fr-red);
+    background: transparent;
+  }
+  .version-btn.fr.active, .version-btn.fr:hover {
+    background: var(--fr-red);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(230,57,70,0.5);
+  }
+
+  .version-btn.lg {
+    border-color: var(--lg-green);
+    color: var(--lg-green);
+    background: transparent;
+  }
+  .version-btn.lg.active, .version-btn.lg:hover {
+    background: var(--lg-green);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(45,198,83,0.5);
+  }
+
+  /* ── SEARCH ── */
+  .search-section {
+    position: relative;
+    z-index: 10;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1rem 1.5rem;
+  }
+
+  .search-wrapper {
+    position: relative;
+  }
+
+  .search-input {
+    width: 100%;
+    background: #0a0a1a;
+    border: 3px solid var(--accent);
+    border-radius: 0px;
+    color: var(--accent);
+    font-family: var(--pixel);
+    font-size: 0.55rem;
+    font-weight: 400;
+    padding: 0.85rem 1rem 0.85rem 3.2rem;
+    outline: none;
+    letter-spacing: 1px;
+    box-shadow: 4px 4px 0 rgba(244,208,63,0.3), inset 0 0 20px rgba(0,0,0,0.5);
+    transition: box-shadow 0.2s, border-color 0.2s;
+    image-rendering: pixelated;
+  }
+  .search-input:focus {
+    border-color: #fff;
+    color: #fff;
+    box-shadow: 4px 4px 0 rgba(255,255,255,0.2), inset 0 0 20px rgba(0,0,0,0.5);
+  }
+  .search-input::placeholder { color: #555577; }
+
+  /* Pixel-art cursor blink on focus */
+  .search-input:focus::placeholder { color: transparent; }
+
+  .search-icon {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Pixel magnifier SVG */
+  .search-icon svg {
+    width: 22px;
+    height: 22px;
+    image-rendering: pixelated;
+  }
+
+  /* ── POKEMON GRID ── */
+  .grid-section {
+    position: relative;
+    z-index: 10;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1rem 2rem;
+  }
+
+  .grid-label {
+    font-family: var(--pixel);
+    font-size: 0.5rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+  }
+
+  .pokemon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.6rem;
+    max-height: 340px;
+    overflow-y: auto;
+    padding-right: 0.3rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--card-border) transparent;
+  }
+
+  .pokemon-grid::-webkit-scrollbar { width: 6px; }
+  .pokemon-grid::-webkit-scrollbar-track { background: transparent; }
+  .pokemon-grid::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 3px; }
+
+  .poke-card {
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
+    border-radius: 8px;
+    padding: 0.6rem 0.3rem 0.4rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .poke-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  }
+
+  .poke-card.selected {
+    border-color: var(--accent);
+    background: rgba(244,208,63,0.1);
+    box-shadow: 0 0 15px rgba(244,208,63,0.3);
+  }
+
+  .poke-card.unavailable {
+    opacity: 0.3;
+    cursor: not-allowed;
+    filter: grayscale(1);
+  }
+  .poke-card.unavailable:hover {
+    transform: none;
+    border-color: var(--card-border);
+    box-shadow: none;
+  }
+
+  .poke-sprite {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 0.3rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    transition: transform 0.15s, opacity 0.3s;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+  }
+  .poke-card:hover .poke-sprite { transform: scale(1.1); }
+
+  .poke-num {
+    font-family: var(--pixel);
+    font-size: 0.38rem;
+    color: var(--muted);
+    margin-bottom: 0.15rem;
+  }
+
+  .poke-name {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  /* TYPE BADGES */
+  .type-badges { margin-top: 0.3rem; display: flex; justify-content: center; gap: 2px; flex-wrap: wrap; }
+  .type-badge {
+    font-size: 0.45rem;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── DETAILS PANEL ── */
+  .details-panel {
+    position: relative;
+    z-index: 10;
+    max-width: 900px;
+    margin: 0 auto 3rem;
+    padding: 0 1rem;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .details-box {
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .details-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border-bottom: 2px solid var(--card-border);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .details-sprite {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+  }
+
+  .details-info h2 {
+    font-family: var(--pixel);
+    font-size: clamp(0.65rem, 2vw, 0.9rem);
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+
+  .details-info .dex-num {
+    font-family: var(--pixel);
+    font-size: 0.5rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .details-types { display: flex; gap: 0.4rem; }
+
+  .details-body { padding: 1.5rem; }
+
+  .section-title {
+    font-family: var(--pixel);
+    font-size: 0.5rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--card-border);
+  }
+
+  .no-locations {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+  }
+  .no-locations .big { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .no-locations p { font-size: 0.85rem; }
+
+  /* LOCATION TABLE */
+  .location-table { width: 100%; border-collapse: collapse; }
+  .location-table th {
+    font-family: var(--pixel);
+    font-size: 0.4rem;
+    color: var(--muted);
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--card-border);
+    letter-spacing: 1px;
+  }
+  .location-table td {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .location-table tr:last-child td { border-bottom: none; }
+  .location-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+  .location-name { color: var(--text); }
+  .method-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .rate-bar-wrap { display: flex; align-items: center; gap: 0.5rem; }
+  .rate-bar {
+    height: 6px;
+    border-radius: 3px;
+    flex: 1;
+    background: rgba(255,255,255,0.1);
+    overflow: hidden;
+    min-width: 60px;
+  }
+  .rate-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+  .rate-text { font-size: 0.75rem; color: var(--accent); font-weight: 800; white-space: nowrap; }
+
+  .level-range { color: var(--muted); font-size: 0.8rem; }
+
+  /* EXCLUSIVE BADGE */
+  .excl-badge {
+    display: inline-block;
+    font-size: 0.55rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+  }
+  .excl-fr { background: rgba(230,57,70,0.2); color: var(--fr-red); border: 1px solid var(--fr-red); }
+  .excl-lg { background: rgba(45,198,83,0.2); color: var(--lg-green); border: 1px solid var(--lg-green); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--muted);
+    position: relative;
+    z-index: 10;
+  }
+  .empty-state .big-sprite { font-size: 4rem; margin-bottom: 1rem; opacity: 0.3; }
+  .empty-state p { font-family: var(--pixel); font-size: 0.5rem; letter-spacing: 2px; line-height: 2; }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--muted);
+    font-size: 0.7rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* TYPE COLORS */
+  .t-normal    { background:#A8A878; color:#fff; }
+  .t-fire      { background:#F08030; color:#fff; }
+  .t-water     { background:#6890F0; color:#fff; }
+  .t-electric  { background:#F8D030; color:#222; }
+  .t-grass     { background:#78C850; color:#fff; }
+  .t-ice       { background:#98D8D8; color:#222; }
+  .t-fighting  { background:#C03028; color:#fff; }
+  .t-poison    { background:#A040A0; color:#fff; }
+  .t-ground    { background:#E0C068; color:#222; }
+  .t-flying    { background:#A890F0; color:#fff; }
+  .t-psychic   { background:#F85888; color:#fff; }
+  .t-bug       { background:#A8B820; color:#fff; }
+  .t-rock      { background:#B8A038; color:#fff; }
+  .t-ghost     { background:#705898; color:#fff; }
+  .t-dragon    { background:#7038F8; color:#fff; }
+  .t-dark      { background:#705848; color:#fff; }
+  .t-steel     { background:#B8B8D0; color:#222; }
+
+  /* METHOD COLORS */
+  .m-grass { background:rgba(120,200,80,0.15); color:#78C850; border:1px solid rgba(120,200,80,0.3); }
+  .m-surf  { background:rgba(104,144,240,0.15); color:#6890F0; border:1px solid rgba(104,144,240,0.3); }
+  .m-fish  { background:rgba(100,180,230,0.15); color:#64B4E6; border:1px solid rgba(100,180,230,0.3); }
+  .m-cave  { background:rgba(160,160,160,0.15); color:#aaa; border:1px solid rgba(160,160,160,0.3); }
+  .m-gift  { background:rgba(244,208,63,0.15); color:var(--accent); border:1px solid rgba(244,208,63,0.3); }
+  .m-trade { background:rgba(200,80,200,0.15); color:#C850C8; border:1px solid rgba(200,80,200,0.3); }
+  .m-event { background:rgba(230,57,70,0.15); color:var(--fr-red); border:1px solid rgba(230,57,70,0.3); }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <svg class="pokeball-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- Top half red -->
+    <path d="M 50 5 A 45 45 0 0 1 95 50 L 50 50 Z" fill="#e63946"/>
+    <path d="M 50 5 A 45 45 0 0 0 5 50 L 50 50 Z" fill="#e63946"/>
+    <!-- Bottom half white -->
+    <path d="M 5 50 A 45 45 0 0 0 95 50 L 50 50 Z" fill="#f0f0f0"/>
+    <!-- Middle black band -->
+    <rect x="5" y="45" width="90" height="10" fill="#222"/>
+    <!-- Outer ring -->
+    <circle cx="50" cy="50" r="45" fill="none" stroke="#222" stroke-width="5"/>
+    <!-- Center button ring -->
+    <circle cx="50" cy="50" r="14" fill="#222"/>
+    <circle cx="50" cy="50" r="9" fill="#f0f0f0"/>
+    <circle cx="50" cy="50" r="5" fill="#fff"/>
+  </svg>
+  <div class="logo-title">Gonna Catch 'em All!</div>
+  <div class="logo-sub">FireRed &amp; LeafGreen &nbsp;·&nbsp; Kanto Pokédex</div>
+</header>
+
+<div class="version-tabs">
+  <button class="version-btn fr active" onclick="setVersion('fr')">🔴 FIRE RED</button>
+  <button class="version-btn lg" onclick="setVersion('lg')">🟢 LEAF GREEN</button>
+</div>
+
+<div class="search-section">
+  <div class="search-wrapper">
+    <span class="search-icon">
+      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Pixel-art magnifier -->
+        <rect x="2" y="2" width="2" height="2" fill="#f4d03f"/>
+        <rect x="4" y="1" width="4" height="1" fill="#f4d03f"/>
+        <rect x="8" y="2" width="2" height="2" fill="#f4d03f"/>
+        <rect x="9" y="4" width="1" height="4" fill="#f4d03f"/>
+        <rect x="8" y="8" width="2" height="2" fill="#f4d03f"/>
+        <rect x="4" y="9" width="4" height="1" fill="#f4d03f"/>
+        <rect x="2" y="8" width="2" height="2" fill="#f4d03f"/>
+        <rect x="1" y="4" width="1" height="4" fill="#f4d03f"/>
+        <rect x="9" y="9" width="2" height="2" fill="#f4d03f"/>
+        <rect x="11" y="11" width="2" height="2" fill="#f4d03f"/>
+        <rect x="13" y="13" width="2" height="2" fill="#f4d03f"/>
+      </svg>
+    </span>
+    <input class="search-input" id="searchInput" type="text" placeholder="Buscar por nome ou número..." oninput="filterPokemon()">
+  </div>
+</div>
+
+<div class="grid-section">
+  <div class="grid-label">— SELECIONE UM POKÉMON —</div>
+  <div class="pokemon-grid" id="pokemonGrid"></div>
+</div>
+
+<div class="details-panel hidden" id="detailsPanel">
+  <div class="details-box">
+    <div class="details-header">
+      <img class="details-sprite" id="detailsSprite" src="" alt="">
+      <div class="details-info">
+        <div class="dex-num" id="detailsNum">#001</div>
+        <h2 id="detailsName">Bulbasaur</h2>
+        <div class="details-types" id="detailsTypes"></div>
+      </div>
+    </div>
+    <div class="details-body">
+      <div class="section-title">📍 LOCAIS DE CAPTURA</div>
+      <div id="locationsContent"></div>
+    </div>
+  </div>
+</div>
+
+<div class="empty-state" id="emptyState">
+  <div class="big-sprite">🔴</div>
+  <p>SELECIONE UM POKÉMON<br>PARA VER ONDE CAPTURÁ-LO</p>
+</div>
+
+<footer>
+  Pokémon FireRed &amp; LeafGreen · &nbsp;|&nbsp; &nbsp;|&nbsp; Fan-made, sem afiliação com Nintendo/Game Freak
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════
+//  POKÉMON DATA
+//  locations: array of { area, method, rate, levels, version }
+//  version: 'both' | 'fr' | 'lg'
+// ═══════════════════════════════════════════════
+const POKEMON = [
+  {id:1, name:"Bulbasaur", types:["grass","poison"],
+   locations:[{area:"Pallet Town – Prof. Oak (inicial)",method:"gift",rate:100,levels:"5-5",version:"both"}]},
+  {id:2, name:"Ivysaur", types:["grass","poison"],
+   locations:[{area:"Evolução de Bulbasaur (Nv.16)",method:"trade",rate:100,levels:"16+",version:"both"}]},
+  {id:3, name:"Venusaur", types:["grass","poison"],
+   locations:[{area:"Evolução de Ivysaur (Nv.32)",method:"trade",rate:100,levels:"32+",version:"both"}]},
+  {id:4, name:"Charmander", types:["fire"],
+   locations:[{area:"Pallet Town – Prof. Oak (inicial)",method:"gift",rate:100,levels:"5-5",version:"both"}]},
+  {id:5, name:"Charmeleon", types:["fire"],
+   locations:[{area:"Evolução de Charmander (Nv.16)",method:"trade",rate:100,levels:"16+",version:"both"}]},
+  {id:6, name:"Charizard", types:["fire","flying"],
+   locations:[{area:"Evolução de Charmeleon (Nv.36)",method:"trade",rate:100,levels:"36+",version:"both"}]},
+  {id:7, name:"Squirtle", types:["water"],
+   locations:[{area:"Pallet Town – Prof. Oak (inicial)",method:"gift",rate:100,levels:"5-5",version:"both"},
+               {area:"Vermilion City – Oficial Jenny",method:"gift",rate:100,levels:"10-10",version:"both"}]},
+  {id:8, name:"Wartortle", types:["water"],
+   locations:[{area:"Evolução de Squirtle (Nv.16)",method:"trade",rate:100,levels:"16+",version:"both"}]},
+  {id:9, name:"Blastoise", types:["water"],
+   locations:[{area:"Evolução de Wartortle (Nv.36)",method:"trade",rate:100,levels:"36+",version:"both"}]},
+  {id:10, name:"Caterpie", types:["bug"],
+   locations:[{area:"Viridian Forest",method:"grass",rate:20,levels:"3-6",version:"fr"},
+               {area:"Route 2",method:"grass",rate:5,levels:"3-4",version:"fr"}]},
+  {id:11, name:"Metapod", types:["bug"],
+   locations:[{area:"Viridian Forest",method:"grass",rate:30,levels:"4-7",version:"fr"},
+               {area:"Route 2",method:"grass",rate:5,levels:"4-5",version:"fr"}]},
+  {id:12, name:"Butterfree", types:["bug","flying"],
+   locations:[{area:"Evolução de Metapod (Nv.10)",method:"trade",rate:100,levels:"10+",version:"both"}]},
+  {id:13, name:"Weedle", types:["bug","poison"],
+   locations:[{area:"Viridian Forest",method:"grass",rate:20,levels:"3-6",version:"lg"},
+               {area:"Route 2",method:"grass",rate:5,levels:"3-4",version:"lg"}]},
+  {id:14, name:"Kakuna", types:["bug","poison"],
+   locations:[{area:"Viridian Forest",method:"grass",rate:30,levels:"4-7",version:"lg"},
+               {area:"Route 2",method:"grass",rate:5,levels:"4-5",version:"lg"}]},
+  {id:15, name:"Beedrill", types:["bug","poison"],
+   locations:[{area:"Evolução de Kakuna (Nv.10)",method:"trade",rate:100,levels:"10+",version:"both"}]},
+  {id:16, name:"Pidgey", types:["normal","flying"],
+   locations:[{area:"Route 1",method:"grass",rate:45,levels:"2-5",version:"both"},
+               {area:"Route 2",method:"grass",rate:30,levels:"3-5",version:"both"},
+               {area:"Route 5",method:"grass",rate:20,levels:"13-16",version:"both"},
+               {area:"Route 6",method:"grass",rate:20,levels:"13-16",version:"both"}]},
+  {id:17, name:"Pidgeotto", types:["normal","flying"],
+   locations:[{area:"Route 14",method:"grass",rate:25,levels:"25-28",version:"both"},
+               {area:"Route 15",method:"grass",rate:25,levels:"25-28",version:"both"}]},
+  {id:18, name:"Pidgeot", types:["normal","flying"],
+   locations:[{area:"Evolução de Pidgeotto (Nv.36)",method:"trade",rate:100,levels:"36+",version:"both"}]},
+  {id:19, name:"Rattata", types:["normal"],
+   locations:[{area:"Route 1",method:"grass",rate:45,levels:"2-4",version:"both"},
+               {area:"Route 2",method:"grass",rate:35,levels:"3-5",version:"both"},
+               {area:"Route 22",method:"grass",rate:25,levels:"3-4",version:"both"}]},
+  {id:20, name:"Raticate", types:["normal"],
+   locations:[{area:"Route 16",method:"grass",rate:20,levels:"25-27",version:"both"},
+               {area:"Route 18",method:"grass",rate:20,levels:"25-27",version:"both"}]},
+  {id:21, name:"Spearow", types:["normal","flying"],
+   locations:[{area:"Route 3",method:"grass",rate:20,levels:"6-10",version:"both"},
+               {area:"Route 22",method:"grass",rate:20,levels:"3-4",version:"both"},
+               {area:"Route 9",method:"grass",rate:15,levels:"18-22",version:"both"}]},
+  {id:22, name:"Fearow", types:["normal","flying"],
+   locations:[{area:"Route 17",method:"grass",rate:20,levels:"31-35",version:"both"},
+               {area:"Route 18",method:"grass",rate:20,levels:"31-35",version:"both"}]},
+  {id:23, name:"Ekans", types:["poison"],
+   locations:[{area:"Route 4",method:"grass",rate:15,levels:"8-12",version:"fr"},
+               {area:"Route 11",method:"grass",rate:20,levels:"11-15",version:"fr"},
+               {area:"Route 9",method:"grass",rate:15,levels:"18-22",version:"fr"},
+               {area:"Route 10",method:"grass",rate:10,levels:"18-22",version:"fr"}]},
+  {id:24, name:"Arbok", types:["poison"],
+   locations:[{area:"Route 23",method:"grass",rate:15,levels:"37-42",version:"fr"}]},
+  {id:25, name:"Pikachu", types:["electric"],
+   locations:[{area:"Viridian Forest",method:"grass",rate:5,levels:"3-5",version:"both"},
+               {area:"Power Plant",method:"grass",rate:25,levels:"22-27",version:"both"}]},
+  {id:26, name:"Raichu", types:["electric"],
+   locations:[{area:"Evolução de Pikachu (Trovão)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:27, name:"Sandshrew", types:["ground"],
+   locations:[{area:"Route 4",method:"grass",rate:15,levels:"8-12",version:"fr"},
+               {area:"Route 11",method:"grass",rate:15,levels:"11-15",version:"fr"},
+               {area:"Diglett's Cave",method:"cave",rate:5,levels:"15-22",version:"fr"},
+               {area:"Safari Zone",method:"grass",rate:20,levels:"20-30",version:"fr"}]},
+  {id:28, name:"Sandslash", types:["ground"],
+   locations:[{area:"Evolução de Sandshrew (Nv.22)",method:"trade",rate:100,levels:"22+",version:"both"}]},
+  {id:29, name:"Nidoran♀", types:["poison"],
+   locations:[{area:"Route 22",method:"grass",rate:15,levels:"3-4",version:"both"},
+               {area:"Route 3",method:"grass",rate:15,levels:"6-10",version:"both"},
+               {area:"Safari Zone",method:"grass",rate:15,levels:"20-30",version:"both"}]},
+  {id:30, name:"Nidorina", types:["poison"],
+   locations:[{area:"Safari Zone",method:"grass",rate:10,levels:"25-30",version:"both"}]},
+  {id:31, name:"Nidoqueen", types:["poison","ground"],
+   locations:[{area:"Evolução de Nidorina (Lua)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:32, name:"Nidoran♂", types:["poison"],
+   locations:[{area:"Route 22",method:"grass",rate:15,levels:"3-4",version:"both"},
+               {area:"Route 3",method:"grass",rate:15,levels:"6-10",version:"both"},
+               {area:"Safari Zone",method:"grass",rate:15,levels:"20-30",version:"both"}]},
+  {id:33, name:"Nidorino", types:["poison"],
+   locations:[{area:"Safari Zone",method:"grass",rate:10,levels:"25-30",version:"both"}]},
+  {id:34, name:"Nidoking", types:["poison","ground"],
+   locations:[{area:"Evolução de Nidorino (Lua)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:35, name:"Clefairy", types:["normal"],
+   locations:[{area:"Mt. Moon",method:"cave",rate:5,levels:"8-12",version:"both"},
+               {area:"Mt. Moon (B2F)",method:"cave",rate:8,levels:"8-12",version:"both"}]},
+  {id:36, name:"Clefable", types:["normal"],
+   locations:[{area:"Evolução de Clefairy (Lua)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:37, name:"Vulpix", types:["fire"],
+   locations:[{area:"Route 7",method:"grass",rate:20,levels:"19-22",version:"lg"},
+               {area:"Route 8",method:"grass",rate:20,levels:"19-22",version:"lg"},
+               {area:"Pokemon Mansion",method:"cave",rate:15,levels:"28-35",version:"lg"}]},
+  {id:38, name:"Ninetales", types:["fire"],
+   locations:[{area:"Evolução de Vulpix (Pedra Fogo)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:39, name:"Jigglypuff", types:["normal"],
+   locations:[{area:"Route 3",method:"grass",rate:20,levels:"6-10",version:"both"},
+               {area:"Route 4",method:"grass",rate:15,levels:"8-12",version:"both"}]},
+  {id:40, name:"Wigglytuff", types:["normal"],
+   locations:[{area:"Evolução de Jigglypuff (Lua)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:41, name:"Zubat", types:["poison","flying"],
+   locations:[{area:"Mt. Moon",method:"cave",rate:65,levels:"6-12",version:"both"},
+               {area:"Rock Tunnel",method:"cave",rate:50,levels:"16-22",version:"both"},
+               {area:"Victory Road",method:"cave",rate:30,levels:"36-42",version:"both"},
+               {area:"Seafoam Islands",method:"cave",rate:60,levels:"28-35",version:"both"},
+               {area:"Pokemon Tower",method:"cave",rate:50,levels:"16-23",version:"both"}]},
+  {id:42, name:"Golbat", types:["poison","flying"],
+   locations:[{area:"Victory Road",method:"cave",rate:20,levels:"37-44",version:"both"},
+               {area:"Seafoam Islands (B3F-B4F)",method:"cave",rate:20,levels:"30-38",version:"both"}]},
+  // Oddish: FR exclusivo (LG tem Bellsprout)
+  {id:43, name:"Oddish", types:["grass","poison"],
+   locations:[{area:"Route 5",method:"grass",rate:20,levels:"13-16",version:"fr"},
+               {area:"Route 6",method:"grass",rate:20,levels:"13-16",version:"fr"},
+               {area:"Route 7",method:"grass",rate:20,levels:"19-22",version:"fr"},
+               {area:"Route 8",method:"grass",rate:20,levels:"19-22",version:"fr"},
+               {area:"Route 12",method:"grass",rate:15,levels:"17-20",version:"fr"},
+               {area:"Route 13",method:"grass",rate:15,levels:"17-20",version:"fr"},
+               {area:"Route 14",method:"grass",rate:15,levels:"25-28",version:"fr"},
+               {area:"Route 15",method:"grass",rate:15,levels:"25-28",version:"fr"}]},
+  {id:44, name:"Gloom", types:["grass","poison"],
+   locations:[{area:"Safari Zone",method:"grass",rate:15,levels:"25-30",version:"fr"}]},
+  {id:45, name:"Vileplume", types:["grass","poison"],
+   locations:[{area:"Evolução de Gloom (Folha Pedra)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:46, name:"Paras", types:["bug","grass"],
+   locations:[{area:"Mt. Moon",method:"cave",rate:15,levels:"8-12",version:"both"},
+               {area:"Safari Zone",method:"grass",rate:20,levels:"20-30",version:"both"}]},
+  {id:47, name:"Parasect", types:["bug","grass"],
+   locations:[{area:"Safari Zone",method:"grass",rate:5,levels:"30+",version:"both"}]},
+  {id:48, name:"Venonat", types:["bug","poison"],
+   locations:[{area:"Route 12",method:"grass",rate:20,levels:"17-20",version:"both"},
+               {area:"Route 13",method:"grass",rate:20,levels:"17-20",version:"both"},
+               {area:"Safari Zone",method:"grass",rate:25,levels:"20-30",version:"both"}]},
+  {id:49, name:"Venomoth", types:["bug","poison"],
+   locations:[{area:"Route 14",method:"grass",rate:15,levels:"25-28",version:"both"},
+               {area:"Safari Zone",method:"grass",rate:5,levels:"30+",version:"both"}]},
+  {id:50, name:"Diglett", types:["ground"],
+   locations:[{area:"Diglett's Cave",method:"cave",rate:95,levels:"15-22",version:"both"}]},
+  {id:51, name:"Dugtrio", types:["ground"],
+   locations:[{area:"Diglett's Cave",method:"cave",rate:5,levels:"19-22",version:"both"}]},
+  {id:52, name:"Meowth", types:["normal"],
+   locations:[{area:"Route 5",method:"grass",rate:15,levels:"13-16",version:"lg"},
+               {area:"Route 6",method:"grass",rate:15,levels:"13-16",version:"lg"},
+               {area:"Route 7",method:"grass",rate:15,levels:"19-22",version:"lg"},
+               {area:"Route 8",method:"grass",rate:15,levels:"19-22",version:"lg"},
+               {area:"Route 3",method:"grass",rate:15,levels:"6-10",version:"lg"},
+               {area:"Route 4",method:"grass",rate:10,levels:"8-12",version:"lg"}]},
+  {id:53, name:"Persian", types:["normal"],
+   locations:[{area:"Route 7 (raro)",method:"grass",rate:5,levels:"19-22",version:"lg"}]},
+  {id:54, name:"Psyduck", types:["water"],
+   locations:[{area:"Safari Zone (água)",method:"surf",rate:30,levels:"15-25",version:"both"},
+               {area:"Seafoam Islands (B2F-B4F)",method:"surf",rate:25,levels:"15-25",version:"both"}]},
+  {id:55, name:"Golduck", types:["water"],
+   locations:[{area:"Safari Zone (água)",method:"surf",rate:10,levels:"25+",version:"both"},
+               {area:"Seafoam Islands",method:"surf",rate:10,levels:"25+",version:"both"}]},
+  {id:56, name:"Mankey", types:["fighting"],
+   locations:[{area:"Route 22",method:"grass",rate:15,levels:"3-4",version:"fr"},
+               {area:"Route 23",method:"grass",rate:15,levels:"37-42",version:"fr"},
+               {area:"Route 3",method:"grass",rate:15,levels:"6-10",version:"fr"},
+               {area:"Route 4",method:"grass",rate:10,levels:"8-12",version:"fr"},
+               {area:"Victory Road",method:"cave",rate:15,levels:"40+",version:"fr"}]},
+  {id:57, name:"Primeape", types:["fighting"],
+   locations:[{area:"Route 23",method:"grass",rate:10,levels:"37-42",version:"fr"},
+               {area:"Victory Road",method:"cave",rate:10,levels:"40+",version:"fr"}]},
+  {id:58, name:"Growlithe", types:["fire"],
+   locations:[{area:"Route 7",method:"grass",rate:20,levels:"19-22",version:"fr"},
+               {area:"Route 8",method:"grass",rate:20,levels:"19-22",version:"fr"},
+               {area:"Pokemon Mansion",method:"cave",rate:20,levels:"28-35",version:"fr"}]},
+  {id:59, name:"Arcanine", types:["fire"],
+   locations:[{area:"Evolução de Growlithe (Pedra Fogo)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:60, name:"Poliwag", types:["water"],
+   locations:[{area:"Route 22 (pesca)",method:"fish",rate:30,levels:"5-15",version:"both"},
+               {area:"Route 23 (pesca)",method:"fish",rate:30,levels:"5-20",version:"both"},
+               {area:"Safari Zone (água)",method:"surf",rate:20,levels:"10-25",version:"both"}]},
+  {id:61, name:"Poliwhirl", types:["water"],
+   locations:[{area:"Route 23 (surf)",method:"surf",rate:15,levels:"25-30",version:"both"},
+               {area:"Safari Zone (água)",method:"surf",rate:10,levels:"25+",version:"both"}]},
+  {id:62, name:"Poliwrath", types:["water","fighting"],
+   locations:[{area:"Evolução de Poliwhirl (Pedra Água)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:63, name:"Abra", types:["psychic"],
+   locations:[{area:"Route 24",method:"grass",rate:15,levels:"8-12",version:"both"},
+               {area:"Route 25",method:"grass",rate:15,levels:"8-12",version:"both"}]},
+  {id:64, name:"Kadabra", types:["psychic"],
+   locations:[{area:"Evolução de Abra (Nv.16)",method:"trade",rate:100,levels:"16+",version:"both"}]},
+  {id:65, name:"Alakazam", types:["psychic"],
+   locations:[{area:"Evolução de Kadabra (troca)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:66, name:"Machop", types:["fighting"],
+   locations:[{area:"Rock Tunnel",method:"cave",rate:15,levels:"16-22",version:"both"},
+               {area:"Victory Road",method:"cave",rate:25,levels:"37-44",version:"both"},
+               {area:"Mt. Ember (Sevii – B1F)",method:"cave",rate:20,levels:"20-30",version:"both"}]},
+  {id:67, name:"Machoke", types:["fighting"],
+   locations:[{area:"Victory Road",method:"cave",rate:15,levels:"39-46",version:"both"}]},
+  {id:68, name:"Machamp", types:["fighting"],
+   locations:[{area:"Evolução de Machoke (troca)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:69, name:"Bellsprout", types:["grass","poison"],
+   locations:[{area:"Route 5",method:"grass",rate:20,levels:"13-16",version:"lg"},
+               {area:"Route 6",method:"grass",rate:20,levels:"13-16",version:"lg"},
+               {area:"Route 7",method:"grass",rate:20,levels:"19-22",version:"lg"},
+               {area:"Route 8",method:"grass",rate:20,levels:"19-22",version:"lg"},
+               {area:"Route 12",method:"grass",rate:15,levels:"17-20",version:"lg"},
+               {area:"Route 13",method:"grass",rate:15,levels:"17-20",version:"lg"},
+               {area:"Route 14",method:"grass",rate:15,levels:"25-28",version:"lg"},
+               {area:"Route 15",method:"grass",rate:15,levels:"25-28",version:"lg"},
+               {area:"Route 24",method:"grass",rate:20,levels:"8-12",version:"lg"},
+               {area:"Route 25",method:"grass",rate:20,levels:"8-12",version:"lg"}]},
+  {id:70, name:"Weepinbell", types:["grass","poison"],
+   locations:[{area:"Safari Zone",method:"grass",rate:15,levels:"25-30",version:"lg"}]},
+  {id:71, name:"Victreebel", types:["grass","poison"],
+   locations:[{area:"Evolução de Weepinbell (Folha Pedra)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:72, name:"Tentacool", types:["water","poison"],
+   locations:[{area:"Qualquer rota com surf",method:"surf",rate:60,levels:"12-40",version:"both"}]},
+  {id:73, name:"Tentacruel", types:["water","poison"],
+   locations:[{area:"Cinnabar Island (surf)",method:"surf",rate:10,levels:"30-40",version:"both"},
+               {area:"Route 20 (surf)",method:"surf",rate:10,levels:"30-40",version:"both"}]},
+  {id:74, name:"Geodude", types:["rock","ground"],
+   locations:[{area:"Mt. Moon",method:"cave",rate:20,levels:"8-12",version:"both"},
+               {area:"Rock Tunnel",method:"cave",rate:40,levels:"16-22",version:"both"},
+               {area:"Victory Road",method:"cave",rate:25,levels:"37-44",version:"both"}]},
+  {id:75, name:"Graveler", types:["rock","ground"],
+   locations:[{area:"Rock Tunnel (B1F)",method:"cave",rate:15,levels:"18-22",version:"both"},
+               {area:"Victory Road",method:"cave",rate:20,levels:"37-44",version:"both"}]},
+  {id:76, name:"Golem", types:["rock","ground"],
+   locations:[{area:"Evolução de Graveler (troca)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:77, name:"Ponyta", types:["fire"],
+   locations:[{area:"Pokemon Mansion",method:"cave",rate:20,levels:"28-35",version:"both"}]},
+  {id:78, name:"Rapidash", types:["fire"],
+   locations:[{area:"Pokemon Mansion",method:"cave",rate:5,levels:"35+",version:"both"}]},
+  {id:79, name:"Slowpoke", types:["water","psychic"],
+   locations:[{area:"Safari Zone",method:"grass",rate:20,levels:"20-30",version:"both"},
+               {area:"Safari Zone (água)",method:"surf",rate:30,levels:"15-30",version:"both"},
+               {area:"Seafoam Islands (água)",method:"surf",rate:30,levels:"15-30",version:"both"}]},
+  {id:80, name:"Slowbro", types:["water","psychic"],
+   locations:[{area:"Seafoam Islands (água)",method:"surf",rate:10,levels:"30+",version:"both"}]},
+  {id:81, name:"Magnemite", types:["electric","steel"],
+   locations:[{area:"Power Plant",method:"grass",rate:25,levels:"22-27",version:"both"}]},
+  {id:82, name:"Magneton", types:["electric","steel"],
+   locations:[{area:"Power Plant",method:"grass",rate:15,levels:"26-32",version:"both"}]},
+  {id:83, name:"Farfetch'd", types:["normal","flying"],
+   locations:[{area:"Vermilion City (troca Spearow)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:84, name:"Doduo", types:["normal","flying"],
+   locations:[{area:"Route 16",method:"grass",rate:20,levels:"25-27",version:"both"},
+               {area:"Route 17",method:"grass",rate:20,levels:"25-32",version:"both"},
+               {area:"Route 18",method:"grass",rate:20,levels:"25-27",version:"both"},
+               {area:"Safari Zone",method:"grass",rate:15,levels:"20-30",version:"both"}]},
+  {id:85, name:"Dodrio", types:["normal","flying"],
+   locations:[{area:"Safari Zone (raro)",method:"grass",rate:5,levels:"30+",version:"both"}]},
+  {id:86, name:"Seel", types:["water"],
+   locations:[{area:"Seafoam Islands (B3F-B4F)",method:"cave",rate:30,levels:"28-35",version:"both"}]},
+  {id:87, name:"Dewgong", types:["water","ice"],
+   locations:[{area:"Seafoam Islands (B4F)",method:"cave",rate:10,levels:"35+",version:"both"}]},
+  {id:88, name:"Grimer", types:["poison"],
+   locations:[{area:"Pokemon Mansion",method:"cave",rate:40,levels:"28-35",version:"both"}]},
+  {id:89, name:"Muk", types:["poison"],
+   locations:[{area:"Pokemon Mansion",method:"cave",rate:10,levels:"35+",version:"both"}]},
+  {id:90, name:"Shellder", types:["water"],
+   locations:[{area:"Route 12 (pesca Good Rod)",method:"fish",rate:35,levels:"10-20",version:"fr"},
+               {area:"Route 13 (pesca Good Rod)",method:"fish",rate:35,levels:"10-20",version:"fr"},
+               {area:"Route 14 (pesca Good Rod)",method:"fish",rate:35,levels:"10-20",version:"fr"},
+               {area:"Seafoam Islands (pesca Good Rod)",method:"fish",rate:35,levels:"10-20",version:"fr"}]},
+  {id:91, name:"Cloyster", types:["water","ice"],
+   locations:[{area:"Evolução de Shellder (Pedra Água)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:92, name:"Gastly", types:["ghost","poison"],
+   locations:[{area:"Pokemon Tower",method:"cave",rate:50,levels:"16-23",version:"both"}]},
+  {id:93, name:"Haunter", types:["ghost","poison"],
+   locations:[{area:"Pokemon Tower (5F-7F)",method:"cave",rate:25,levels:"20-25",version:"both"}]},
+  {id:94, name:"Gengar", types:["ghost","poison"],
+   locations:[{area:"Evolução de Haunter (troca)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:95, name:"Onix", types:["rock","ground"],
+   locations:[{area:"Rock Tunnel",method:"cave",rate:10,levels:"16-22",version:"both"},
+               {area:"Victory Road",method:"cave",rate:15,levels:"37-44",version:"both"}]},
+  {id:96, name:"Drowzee", types:["psychic"],
+   locations:[{area:"Route 11",method:"grass",rate:20,levels:"11-15",version:"both"}]},
+  {id:97, name:"Hypno", types:["psychic"],
+   locations:[{area:"Evolução de Drowzee (Nv.26)",method:"trade",rate:100,levels:"26+",version:"both"}]},
+  {id:98, name:"Krabby", types:["water"],
+   locations:[{area:"Route 25 (pesca Good Rod)",method:"fish",rate:35,levels:"10-20",version:"both"},
+               {area:"Seafoam Islands (pesca)",method:"fish",rate:35,levels:"10-20",version:"both"}]},
+  {id:99, name:"Kingler", types:["water"],
+   locations:[{area:"Evolução de Krabby (Nv.28)",method:"trade",rate:100,levels:"28+",version:"both"}]},
+  {id:100, name:"Voltorb", types:["electric"],
+   locations:[{area:"Power Plant",method:"grass",rate:30,levels:"22-30",version:"both"}]},
+  {id:101, name:"Electrode", types:["electric"],
+   locations:[{area:"Power Plant",method:"grass",rate:5,levels:"29-35",version:"both"}]},
+  {id:102, name:"Exeggcute", types:["grass","psychic"],
+   locations:[{area:"Safari Zone",method:"grass",rate:20,levels:"20-30",version:"both"}]},
+  {id:103, name:"Exeggutor", types:["grass","psychic"],
+   locations:[{area:"Evolução de Exeggcute (Folha Pedra)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:104, name:"Cubone", types:["ground"],
+   locations:[{area:"Pokemon Tower (5F-7F)",method:"cave",rate:25,levels:"20-25",version:"both"}]},
+  {id:105, name:"Marowak", types:["ground"],
+   locations:[{area:"Evolução de Cubone (Nv.28)",method:"trade",rate:100,levels:"28+",version:"both"}]},
+  {id:106, name:"Hitmonlee", types:["fighting"],
+   locations:[{area:"Saffron City – Fighting Dojo",method:"gift",rate:100,levels:"25-25",version:"both"}]},
+  {id:107, name:"Hitmonchan", types:["fighting"],
+   locations:[{area:"Saffron City – Fighting Dojo",method:"gift",rate:100,levels:"25-25",version:"both"}]},
+  {id:108, name:"Lickitung", types:["normal"],
+   locations:[{area:"Route 23 (troca Slowbro)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:109, name:"Koffing", types:["poison"],
+   locations:[{area:"Pokemon Mansion",method:"cave",rate:30,levels:"28-35",version:"both"}]},
+  {id:110, name:"Weezing", types:["poison"],
+   locations:[{area:"Pokemon Mansion",method:"cave",rate:10,levels:"35+",version:"both"}]},
+  {id:111, name:"Rhyhorn", types:["ground","rock"],
+   locations:[{area:"Safari Zone",method:"grass",rate:20,levels:"20-30",version:"both"},
+               {area:"Victory Road",method:"cave",rate:20,levels:"37-44",version:"both"}]},
+  {id:112, name:"Rhydon", types:["ground","rock"],
+   locations:[{area:"Evolução de Rhyhorn (Nv.42)",method:"trade",rate:100,levels:"42+",version:"both"}]},
+  {id:113, name:"Chansey", types:["normal"],
+   locations:[{area:"Safari Zone",method:"grass",rate:4,levels:"20-30",version:"both"},
+               {area:"Pokemon Tower (raro)",method:"cave",rate:2,levels:"20-25",version:"both"}]},
+  {id:114, name:"Tangela", types:["grass"],
+   locations:[{area:"Route 21",method:"grass",rate:20,levels:"26-30",version:"both"}]},
+  {id:115, name:"Kangaskhan", types:["normal"],
+   locations:[{area:"Safari Zone",method:"grass",rate:4,levels:"20-30",version:"both"}]},
+  {id:116, name:"Horsea", types:["water"],
+   locations:[{area:"Seafoam Islands (pesca)",method:"fish",rate:35,levels:"10-20",version:"both"},
+               {area:"Route 21 (pesca)",method:"fish",rate:30,levels:"10-20",version:"both"}]},
+  {id:117, name:"Seadra", types:["water"],
+   locations:[{area:"Seafoam Islands (pesca Super Rod)",method:"fish",rate:15,levels:"25-35",version:"both"}]},
+  {id:118, name:"Goldeen", types:["water"],
+   locations:[{area:"Safari Zone (pesca)",method:"fish",rate:30,levels:"10-30",version:"both"},
+               {area:"Route 12 (pesca Old Rod)",method:"fish",rate:40,levels:"5-10",version:"both"}]},
+  {id:119, name:"Seaking", types:["water"],
+   locations:[{area:"Safari Zone (pesca Super Rod)",method:"fish",rate:25,levels:"25-40",version:"both"}]},
+  {id:120, name:"Staryu", types:["water"],
+   locations:[{area:"Cinnabar Island (surf)",method:"surf",rate:20,levels:"15-35",version:"lg"},
+               {area:"Seafoam Islands (surf)",method:"surf",rate:15,levels:"15-35",version:"lg"},
+               {area:"Route 19 (surf)",method:"surf",rate:15,levels:"15-35",version:"lg"},
+               {area:"Route 20 (surf)",method:"surf",rate:15,levels:"15-35",version:"lg"}]},
+  {id:121, name:"Starmie", types:["water","psychic"],
+   locations:[{area:"Evolução de Staryu (Pedra Água)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:122, name:"Mr. Mime", types:["psychic"],
+   locations:[{area:"Route 2 (troca Abra)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:123, name:"Scyther", types:["bug","flying"],
+   locations:[{area:"Safari Zone (Center & Area 1)",method:"grass",rate:4,levels:"23-27",version:"fr"}]},
+  {id:124, name:"Jynx", types:["ice","psychic"],
+   locations:[{area:"Cerulean City (troca Poliwhirl por NPC)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:125, name:"Electabuzz", types:["electric"],
+   locations:[{area:"Power Plant",method:"grass",rate:20,levels:"26-32",version:"fr"}]},
+  {id:126, name:"Magmar", types:["fire"],
+   locations:[{area:"Pokemon Mansion (1F, 2F, 3F, B1F)",method:"cave",rate:15,levels:"28-35",version:"lg"}]},
+  {id:127, name:"Pinsir", types:["bug"],
+   locations:[{area:"Safari Zone (Center & Area 1)",method:"grass",rate:4,levels:"23-27",version:"lg"}]},
+  {id:128, name:"Tauros", types:["normal"],
+   locations:[{area:"Safari Zone",method:"grass",rate:4,levels:"20-30",version:"both"}]},
+  {id:129, name:"Magikarp", types:["water"],
+   locations:[{area:"Qualquer rota com água (Old Rod)",method:"fish",rate:100,levels:"5-5",version:"both"},
+               {area:"Mt. Moon Square – vendedor",method:"gift",rate:100,levels:"5-5",version:"both"}]},
+  {id:130, name:"Gyarados", types:["water","flying"],
+   locations:[{area:"Evolução de Magikarp (Nv.20)",method:"trade",rate:100,levels:"20+",version:"both"},
+               {area:"Safari Zone (surf, raro)",method:"surf",rate:1,levels:"30+",version:"both"}]},
+  {id:131, name:"Lapras", types:["water","ice"],
+   locations:[{area:"Silph Co. (andar 7) – presente NPC",method:"gift",rate:100,levels:"25-25",version:"both"}]},
+  {id:132, name:"Ditto", types:["normal"],
+   locations:[{area:"Pokemon Mansion",method:"cave",rate:15,levels:"28-35",version:"both"},
+               {area:"Route 13",method:"grass",rate:5,levels:"17-20",version:"both"},
+               {area:"Cerulean Cave",method:"cave",rate:10,levels:"47-55",version:"both"}]},
+  {id:133, name:"Eevee", types:["normal"],
+   locations:[{area:"Celadon City – Celadon Mansion (top)",method:"gift",rate:100,levels:"25-25",version:"both"}]},
+  {id:134, name:"Vaporeon", types:["water"],
+   locations:[{area:"Evolução de Eevee (Pedra Água)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:135, name:"Jolteon", types:["electric"],
+   locations:[{area:"Evolução de Eevee (Trovão)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:136, name:"Flareon", types:["fire"],
+   locations:[{area:"Evolução de Eevee (Pedra Fogo)",method:"trade",rate:100,levels:"any",version:"both"}]},
+  {id:137, name:"Porygon", types:["normal"],
+   locations:[{area:"Celadon Game Corner – 9999 fichas",method:"trade",rate:100,levels:"25-25",version:"both"}]},
+  {id:138, name:"Omanyte", types:["rock","water"],
+   locations:[{area:"Mt. Moon – Fossil Dome (revivido em Cinnabar)",method:"gift",rate:100,levels:"5-5",version:"both"}]},
+  {id:139, name:"Omastar", types:["rock","water"],
+   locations:[{area:"Evolução de Omanyte (Nv.40)",method:"trade",rate:100,levels:"40+",version:"both"}]},
+  {id:140, name:"Kabuto", types:["rock","water"],
+   locations:[{area:"Mt. Moon – Fossil Helix (revivido em Cinnabar)",method:"gift",rate:100,levels:"5-5",version:"both"}]},
+  {id:141, name:"Kabutops", types:["rock","water"],
+   locations:[{area:"Evolução de Kabuto (Nv.40)",method:"trade",rate:100,levels:"40+",version:"both"}]},
+  {id:142, name:"Aerodactyl", types:["rock","flying"],
+   locations:[{area:"Pewter City Museum – Old Amber (revivido em Cinnabar)",method:"gift",rate:100,levels:"5-5",version:"both"}]},
+  {id:143, name:"Snorlax", types:["normal"],
+   locations:[{area:"Route 12 – Flautatona requerida",method:"gift",rate:100,levels:"30-30",version:"both"},
+               {area:"Route 16 – Flautatona requerida",method:"gift",rate:100,levels:"30-30",version:"both"}]},
+  {id:144, name:"Articuno", types:["ice","flying"],
+   locations:[{area:"Seafoam Islands (B4F) – Lendário",method:"event",rate:100,levels:"50-50",version:"both"}]},
+  {id:145, name:"Zapdos", types:["electric","flying"],
+   locations:[{area:"Power Plant – Lendário",method:"event",rate:100,levels:"50-50",version:"both"}]},
+  {id:146, name:"Moltres", types:["fire","flying"],
+   locations:[{area:"Mt. Ember (Sevii) – Lendário",method:"event",rate:100,levels:"50-50",version:"both"}]},
+  {id:147, name:"Dratini", types:["dragon"],
+   locations:[{area:"Safari Zone (pesca Super Rod)",method:"fish",rate:15,levels:"15-25",version:"both"},
+               {area:"Safari Zone (água, surf)",method:"surf",rate:5,levels:"15-25",version:"both"},
+               {area:"Celadon Game Corner – 4600 fichas",method:"trade",rate:100,levels:"18-18",version:"both"}]},
+  {id:148, name:"Dragonair", types:["dragon"],
+   locations:[{area:"Safari Zone (pesca Super Rod, raro)",method:"fish",rate:4,levels:"25+",version:"both"}]},
+  {id:149, name:"Dragonite", types:["dragon","flying"],
+   locations:[{area:"Evolução de Dragonair (Nv.55)",method:"trade",rate:100,levels:"55+",version:"both"}]},
+  {id:150, name:"Mewtwo", types:["psychic"],
+   locations:[{area:"Cerulean Cave (B1F) – Lendário",method:"event",rate:100,levels:"70-70",version:"both"}]},
+  {id:151, name:"Mew", types:["psychic"],
+   locations:[{area:"Evento especial Nintendo – não disponível normalmente",method:"event",rate:100,levels:"30-30",version:"both"}]},
+];
+
+const METHOD_LABEL = {
+  grass:"Grama Alta", surf:"Surf", fish:"Pesca",
+  cave:"Masmorra / Cave", gift:"Presente / Inicial",
+  trade:"Troca / Evolução", event:"Evento / Lendário"
+};
+
+const METHOD_CLASS = {
+  grass:"m-grass", surf:"m-surf", fish:"m-fish",
+  cave:"m-cave", gift:"m-gift", trade:"m-trade", event:"m-event"
+};
+
+const RATE_COLOR = {
+  grass:"#78C850", surf:"#6890F0", fish:"#64B4E6",
+  cave:"#aaaaaa", gift:"#F8D030", trade:"#C050C0", event:"#e63946"
+};
+
+let currentVersion = 'fr';
+let selectedId = null;
+let filteredList = [...POKEMON];
+
+const spriteCache = {};
+
+function setupSpriteWithFallback(imgEl, id) {
+  if (spriteCache[id]) {
+    imgEl.src = spriteCache[id];
+    imgEl.style.opacity = '1';
+    return;
+  }
+
+  imgEl.style.opacity = '0';
+
+  const isHTTP = location.protocol.startsWith('http');
+
+  if (isHTTP) {
+    // Via servidor HTTP: fetch+blob contorna o bloqueio de hotlink do GitHub
+    fetch(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`)
+      .then(r => { if (!r.ok) throw 0; return r.blob(); })
+      .then(blob => {
+        const burl = URL.createObjectURL(blob);
+        spriteCache[id] = burl;
+        imgEl.src = burl;
+        imgEl.style.transition = 'opacity 0.3s';
+        imgEl.style.opacity = '1';
+      })
+      .catch(() => {
+        // fallback: pokemon.com
+        const purl = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${String(id).padStart(3,'0')}.png`;
+        spriteCache[id] = purl;
+        imgEl.src = purl;
+        imgEl.style.opacity = '1';
+      });
+  } else {
+    // Aberto como file:// — avisa o usuário
+    imgEl.style.opacity = '0.15';
+    // Mostra banner de instrução uma vez
+    if (!window._bannerShown) {
+      window._bannerShown = true;
+      const b = document.createElement('div');
+      b.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#e63946;color:#fff;font-family:monospace;font-size:12px;padding:10px 16px;z-index:9999;text-align:center;';
+      b.innerHTML = '⚠️ Para ver os sprites, abra o arquivo via servidor local: <strong>python3 -m http.server 8080</strong> &nbsp;→&nbsp; acesse <strong>http://localhost:8080</strong> &nbsp;<button onclick="this.parentElement.remove()" style="margin-left:10px;cursor:pointer;background:#fff;color:#e63946;border:none;padding:2px 8px;font-weight:bold">✕</button>';
+      document.body.prepend(b);
+    }
+  }
+}
+
+function setVersion(v) {
+  currentVersion = v;
+  document.querySelectorAll('.version-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.version-btn.${v}`).classList.add('active');
+  renderGrid();
+  if (selectedId) showDetails(selectedId);
+}
+
+function isAvailable(pokemon) {
+  return pokemon.locations.some(l => l.version === 'both' || l.version === currentVersion);
+}
+
+function filterPokemon() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  filteredList = POKEMON.filter(p =>
+    p.name.toLowerCase().includes(q) ||
+    String(p.id).padStart(3,'0').includes(q) ||
+    String(p.id).includes(q)
+  );
+  renderGrid();
+}
+
+function renderGrid() {
+  const grid = document.getElementById('pokemonGrid');
+  grid.innerHTML = '';
+  filteredList.forEach(p => {
+    const avail = isAvailable(p);
+    const card = document.createElement('div');
+    card.className = `poke-card${p.id === selectedId ? ' selected' : ''}${!avail ? ' unavailable' : ''}`;
+    card.title = avail ? p.name : `${p.name} – não disponível na versão ${currentVersion === 'fr' ? 'Fire Red' : 'Leaf Green'}`;
+    card.innerHTML = `
+      <img class="poke-sprite" id="spr-${p.id}" alt="${p.name}" loading="lazy">
+      <div class="poke-num">#${String(p.id).padStart(3,'0')}</div>
+      <div class="poke-name">${p.name}</div>
+      <div class="type-badges">${p.types.map(t=>`<span class="type-badge t-${t}">${t}</span>`).join('')}</div>
+    `;
+    if (avail) card.onclick = () => selectPokemon(p.id);
+    grid.appendChild(card);
+    setupSpriteWithFallback(document.getElementById(`spr-${p.id}`), p.id);
+  });
+}
+
+function selectPokemon(id) {
+  selectedId = id;
+  renderGrid();
+  showDetails(id);
+}
+
+function showDetails(id) {
+  const p = POKEMON.find(x => x.id === id);
+  if (!p) return;
+
+  document.getElementById('emptyState').classList.add('hidden');
+  const panel = document.getElementById('detailsPanel');
+  panel.classList.remove('hidden');
+
+  // Re-trigger animation
+  panel.style.animation = 'none';
+  panel.offsetHeight;
+  panel.style.animation = '';
+
+  const detSprite = document.getElementById('detailsSprite');
+  setupSpriteWithFallback(detSprite, p.id);
+  document.getElementById('detailsNum').textContent = `#${String(p.id).padStart(3,'0')}`;
+  document.getElementById('detailsName').textContent = p.name;
+  document.getElementById('detailsTypes').innerHTML =
+    p.types.map(t=>`<span class="type-badge t-${t}" style="font-size:0.6rem;padding:3px 8px">${t}</span>`).join('');
+
+  const locs = p.locations.filter(l => l.version === 'both' || l.version === currentVersion);
+  const content = document.getElementById('locationsContent');
+
+  if (locs.length === 0) {
+    const verName = currentVersion === 'fr' ? '🔴 Fire Red' : '🟢 Leaf Green';
+    content.innerHTML = `
+      <div class="no-locations">
+        <div class="big">😢</div>
+        <p>Este Pokémon não está disponível na versão <strong>${verName}</strong>.<br>
+        Tente a versão oposta ou obtenha via troca!</p>
+      </div>`;
+    return;
+  }
+
+  let rows = locs.map(l => {
+    const excl = l.version !== 'both'
+      ? `<span class="excl-badge excl-${l.version}">${l.version === 'fr' ? 'FR' : 'LG'}</span>`
+      : '';
+    const rateColor = RATE_COLOR[l.method] || '#aaa';
+    return `<tr>
+      <td class="location-name">${l.area}${excl}</td>
+      <td><span class="method-badge ${METHOD_CLASS[l.method]}">${METHOD_LABEL[l.method]}</span></td>
+      <td>
+        <div class="rate-bar-wrap">
+          <div class="rate-bar"><div class="rate-fill" style="width:${l.rate}%;background:${rateColor}"></div></div>
+          <span class="rate-text">${l.rate}%</span>
+        </div>
+      </td>
+      <td class="level-range">Nv.${l.levels}</td>
+    </tr>`;
+  }).join('');
+
+  content.innerHTML = `
+    <table class="location-table">
+      <thead><tr>
+        <th>LOCAL</th>
+        <th>MÉTODO</th>
+        <th>% APARIÇÃO</th>
+        <th>NÍVEL</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// Init
+renderGrid();
+</script>
+</body>
+</html>
